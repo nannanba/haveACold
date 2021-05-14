@@ -9,7 +9,7 @@
 				<text>提示</text>
 			</view>
 			<view class="modal_bd">
-				<text>您是会员，可以进入易一健康主程序使用此功能，并发现更多。</text>
+				<text>您是会员，可以进入易一健康主程序使用此功能，并发现更多</text>
 			</view>
 			<view class="modal_ft uni-row uni-flex">
 				<button class="modal_cancel"  @tap="dontInto">不进入</button> 
