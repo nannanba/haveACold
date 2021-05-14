@@ -1,0 +1,91 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		    "path" : "pages/start/start",
+		    "style" : {
+				"navigationBarTitleText": "快好",
+				"disableScroll":true
+			}
+		},
+		{
+			"path" : "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "快好",
+				"disableScroll":true
+			}
+		},
+		{
+			"path": "pages/inquiry/inquiry",
+			"style": {
+				"navigationBarTitleText": "快好",
+				"disableScroll":true
+			}
+		},
+		{
+			"path": "pages/inquiry/inquiry-copy",
+			"style": {
+				"navigationBarTitleText": "快好",
+				"disableScroll":true
+			}
+		}
+	    ,{
+            "path" : "pages/history/history",
+            "style" : {
+				"navigationBarTitleText": "快好",
+				"disableScroll":true
+			}
+        },
+		{
+            "path" : "pages/result/result",
+            "style" : {
+				"navigationBarTitleText": "快好"
+			}
+        }
+        
+        ,{
+            "path" : "pages/result/bzlunzhi",
+            "style" : {
+				"navigationBarTitleText": "快好"
+			}
+        },
+		{
+		    "path" : "pages/result/choosezyzz/choosezyzz",
+		    "style" : {
+				"navigationBarTitleText": "快好"
+			}
+		},
+		{
+			"path" : "pages/result/sxmxChooseZyzz",
+			"style" : {
+				"navigationBarTitleText": "快好"
+			}
+		}
+        ,{
+            "path" : "pages/bzlzResult/bzlzResult",
+            "style" : {
+				"navigationBarTitleText": "快好"
+			}
+        }
+        ,{
+            "path" : "pages/wzHistory/wzHistory",
+            "style" : {
+				"navigationBarTitleText": "快好"
+			}
+        }
+        ,{
+            "path" : "pages/historyCopy/historyCopy",
+            "style" : {}
+        },{
+            "path" : "pages/result/wzzy_seach",
+            "style" : {
+				"navigationBarTitleText": "快好"
+			}
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "快好",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
