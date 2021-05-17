@@ -359,9 +359,9 @@
 				var checkedBzjs1='';
 				if (!items[id].checked) {
 					if (this.wzzyAddImgIndex==1) {
-						if (this.checkedValue.length>=2) {
+						if (this.checkedValue.length>=3) {
 							uni.showToast({
-								title: '主诉症状最多可选择两个症状',
+								title: '主诉症状最多可选择三个症状',
 								icon: 'none'
 							});
 							items[id].checked=true;

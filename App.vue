@@ -41,12 +41,12 @@
 	@import './common/uni.css';
 	@font-face {
 	  font-family: 'w-iconfont';  /* project id 1111526 */
-	  src: url('//at.alicdn.com/t/font_1111526_26txnz4vm4u.eot');
-	  src: url('//at.alicdn.com/t/font_1111526_26txnz4vm4u.eot?#iefix') format('embedded-opentype'),
-	  url('//at.alicdn.com/t/font_1111526_26txnz4vm4u.woff2') format('woff2'),
-	  url('//at.alicdn.com/t/font_1111526_26txnz4vm4u.woff') format('woff'),
-	  url('//at.alicdn.com/t/font_1111526_26txnz4vm4u.ttf') format('truetype'),
-	  url('//at.alicdn.com/t/font_1111526_26txnz4vm4u.svg#iconfont') format('svg');
+	  src: url('//at.alicdn.com/t/font_1111526_vr7mpmcne3.eot');
+	  src: url('//at.alicdn.com/t/font_1111526_vr7mpmcne3.eot?#iefix') format('embedded-opentype'),
+	  url('//at.alicdn.com/t/font_1111526_vr7mpmcne3.woff2') format('woff2'),
+	  url('//at.alicdn.com/t/font_1111526_vr7mpmcne3.woff') format('woff'),
+	  url('//at.alicdn.com/t/font_1111526_vr7mpmcne3.ttf') format('truetype'),
+	  url('//at.alicdn.com/t/font_1111526_vr7mpmcne3.svg#iconfont') format('svg');
 	}
 	.jtDown{
 		font-family: 'w-iconfont';
@@ -54,6 +54,21 @@
 	}
 	page{
 		height: 100%;
+	}
+	/* 删除组 */
+	.removeGroup{
+		color: red;
+		font-size: 36upx;
+		font-family: 'w-iconfont';
+	}
+	.addGroup{
+		color: #1296DB;
+		font-size: 44upx;
+		font-family: 'w-iconfont';
+	}
+	.remove{
+		font-family: 'w-iconfont';
+		font-size: 30upx;
 	}
 	.money {
 		font-family: 'w-iconfont';

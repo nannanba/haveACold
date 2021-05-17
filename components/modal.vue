@@ -55,7 +55,30 @@
 	background-color: #ffffff;
 	box-shadow: 0 0 30upx rgba(0, 0, 0, .1);
 	}
-
+.uni-popup-sjzzShow{
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	/* height: 25%; */
+	border-radius: 20upx;
+	top: 45%;
+	left: 50%;
+	overflow: scroll;
+	z-index: 1006;
+	transform: translate(-50%, -50%);
+}
+.uni-popup-zzjsModal{
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	height: 70%;
+	border-radius: 20upx;
+	top: 45%;
+	left: 50%;
+	overflow: scroll;
+	z-index: 1006;
+	transform: translate(-50%, -50%);
+}
 .uni-popup-middle {
 	display: flex;
 	flex-direction: column;

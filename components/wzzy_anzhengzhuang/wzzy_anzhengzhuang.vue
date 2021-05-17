@@ -1,67 +1,77 @@
 <template>
 	<view class="">
-		<!-- <view class="uni_tabtit"><p style="font-size: 36upx; line-height: 2;">主诉症状</p></view> -->
-		<!-- 症状表现 -->
-		<!-- <view class="uni-units">
-			<view class="uni_option uni-flex uni-row">
-				<text>症状表现</text>
-				<view class="uni-flex uni-row" style="margin-left: auto;margin-right: auto;width: 65%;position: relative;">
-					<view class="uni-flex uni-row" style="height: 60upx;margin-top: 20upx; width: 100%;position: relative;">
-					    <input type="text" @focus="lx_viewshow" @blur="lx_viewhide" class="zzbx_input" v-model="zzbx" placeholder="输入关键字查询症状表现" @input="keyup" />
-						<button type="default" size="mini" class="uni_option_serchBtn" @tap="seachZzbx"><text class="suosou">&#xe609;</text></button>
-					</view>
-					<view class="lx_view" v-if="lx_view">
-						<tr v-for="(item, index) in lxci" :key="index" :id="item.bzzz" @tap="idSeach" style="font-size: 30upx;">{{ item.zzjs }}</tr>
-					</view>
-				</view>
-				<view class="uni_nav"><image src="/pagesZhiyi/static/wzzy/add.png" class="addimg" @tap="choosezyzz(1)"></image></view>
-			</view>
-			<view class="zzBtn_view">
-				<button size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}" class="zzBtn_view_btn" v-for="(item, index) in zzbxArr" :key="index">
-					{{ item.bzzz }}
-					<text v-show="item.rmv" class="remove-img" @tap="removeZzbxBtn(index)">&#xe71f;</text>
-				</button>
-			</view>
-		</view> -->
 		<view class="" v-if="!seachModal">
 			<!-- 主诉症状 -->
-			<view class="uni-units">
+			<view class="uni-units" v-show="!subHealth">
 				<view class="uni_option">
 					<view class="title_view">
 						<text>主诉症状</text>
-						<text class="jieshi" @tap="openJieshi(1)">&#xe652;</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(1)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
-						<input class="seach_input" type="text" value="" placeholder="请输入主诉症状..." @tap="openSeachModal(1)" :disabled="true"/>
-						<text class="suosou seach_icon">&#xe609;</text>
+						<text class="addGroup" @tap="choosezyzz(1)">&#xe619;</text>
+						<text class="suosou seach_icon" style="margin-left: 40upx;" @tap="openSeachModal(1)">&#xe609;</text>
 					</view>
-					<image src="/static/wzzy/add.png" class="addimg" @tap="choosezyzz(1)"></image>
 				</view>
-				<view class="zzBtn_view">
-					<button  type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in zzbxArr" :key="index">
-						{{ item.bzzz }}
-						<text class="remove-img" @tap="removeZzbxBtn(index)">&#xe71f;</text>
-					</button>
+				<view class="zzBtn_view" v-show="zzbxConShow">
+					<view class="hint-text" :style="{display:zzbxArray.length==0?'block':'none'}">
+						<text>请搜索或选择您的主要症状</text>
+					</view>
+					<view class="uni-flex uni-row" v-for="(item, index) in zzbxArr" :key="index">
+						<view class="bzzz_tit"><text>{{index+1}}、</text><text>{{item.bzzz}}</text></view>
+						<view class="remove-bzzz" @tap="removeZzbxBtn(index)"><text class="removeBtn" style="font-size: 40upx;color: #31b8ff;">&#xe61c;</text></view>
+					</view>
 				</view>
 			</view>
 			<!-- 其他症状 -->
 			<view class="uni-units">
 				<view class="uni_option">
 					<view class="title_view">
-						<text>其他症状</text>
-						<text class="jieshi" @tap="openJieshi(2)">&#xe652;</text>
+						<text v-if="subHealth">日常症状</text>
+						<text v-else>其他症状</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(2)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
-						<input class="seach_input" type="text" value="" placeholder="请输入其他症状..." @tap="openSeachModal(2)" :disabled="true"/>
-						<text class="suosou  seach_icon" style="vertical-align: middle;">&#xe609;</text>
+						<text class="addGroup" @tap="choosezyzz(2)">&#xe619;</text>
+						<text class="suosou seach_icon" style="margin-left: 40upx;" @tap="openSeachModal(2)">&#xe609;</text>
 					</view>
-					<image src="/static/wzzy/add.png" class="addimg" @tap="choosezyzz(2)"></image>
 				</view>
-				<view class="zzBtn_view">
-					<button  type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in othersArr" :key="index">
+				<view class="zzBtn_view" v-show="otherConShow">
+					<!-- <button  type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in othersArr" :key="index">
 						{{ item.bzzz }}
-						<text class="remove-img" @tap="removeOthersBtn(index)">&#xe71f;</text>
-					</button>
+						<text class="remove-img" v-show="item.rmv" @tap="removeOthersBtn(index)">&#xe71f;</text>
+					</button> -->
+					<view class="hint-text" :style="{display:othersArray.length==0?'block':'none'}">
+						<text v-if="subHealth">请搜索或选择您常出现的症状</text>
+						<text v-else>请搜索或选择其他症状</text>
+					</view>
+					<view class="uni-flex uni-row" v-for="(item, index) in othersArr" :key="index">
+						<view class="bzzz_tit"><text>{{index+1}}、</text><text>{{item.bzzz}}</text></view>
+						<view class="remove-bzzz" @tap="removeOthersBtn(index)"><text class="remove" style="font-size: 40upx;color: #31b8ff;">&#xe61c;</text></view>
+					</view>
+				</view>
+			</view>
+			<!-- 已知病名 -->
+			<view class="uni-units">
+				<view class="uni_option">
+					<view class="title_view">
+						<text>已知病</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(5)">&#xe652;</text>
+					</view>
+					<view class="uni_nav" style="text-align: left;">
+						<text class="suosou seach_icon" style="margin-left: 80upx;" @tap="openSeachModal(5)">&#xe609;</text>
+						<!-- <text class="xiangqing" @tap="openBzzz(5)" v-show="!yzbmShow&&yzbmArr.length!==0">&#xe68d;</text>
+						<text class="packUp" style="float: right;" @tap="yzbmShow=false" v-show="yzbmShow">&#xe63a;</text> -->
+					</view>
+				</view>
+				<view class="zzBtn_view" v-show="yzbConShow">
+					<view class="hint-text" :style="{display:yzbmArray.length==0?'block':'none'}">
+						<text>请搜索或选择您常出现的已知病</text>
+					</view>
+					<view class="uni-flex uni-row" v-for="(item, index) in yzbmArr" :key="index">
+						<view class="bzzz_tit"><text>{{index+1}}、</text><text>{{item}}</text></view>
+						<view class="remove-bzzz" @tap="removeYzbmBtn(index)"><text class="remove" style="font-size: 40upx;color: #31b8ff;">&#xe61c;</text></view>
+					</view>
 				</view>
 			</view>
 			<!-- 舌象 -->
@@ -69,18 +79,25 @@
 				<view class="uni_option">
 					<view class="title_view">
 						<text>舌象</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(3)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
-						<input class="seach_input" type="text" value="" placeholder="请输入舌象..." @tap="openSeachModal(3)" :disabled="true"/>
-						<text class="suosou  seach_icon" style="vertical-align: middle;">&#xe609;</text>
+						<text class="addGroup" @tap="choosezyzz(3)">&#xe619;</text>
+						<text class="suosou seach_icon" style="margin-left: 40upx;" @tap="openSeachModal(3)">&#xe609;</text>
 					</view>
-					<image src="/static/wzzy/add.png" class="addimg" @tap="choosezyzz(3)"></image>
 				</view>
-				<view class="zzBtn_view">
-					<button  type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in sxArr" :key="index">
+				<view class="zzBtn_view" v-show="sxConShow">
+					<!-- <button  type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in sxArr" :key="index">
 						{{ item.bzzz }}
-						<text class="remove-img" @tap="removeSxBtn(index)">&#xe71f;</text>
-					</button>
+						<text class="remove-img"  @tap="removeSxBtn(index)">&#xe71f;</text>
+					</button> -->
+					<view class="hint-text" :style="{display:sxArray.length==0?'block':'none'}">
+						<text>请搜索或选择您常出现的舌体形态</text>
+					</view>
+					<view class="uni-flex uni-row" v-for="(item, index) in sxArr" :key="index">
+						<view class="bzzz_tit"><text>{{index+1}}、</text><text>{{item.bzzz}}</text></view>
+						<view class="remove-bzzz" @tap="removeSxBtn(index)"><text class="remove" style="font-size: 40upx;color: #31b8ff;">&#xe61c;</text></view>
+					</view>
 				</view>
 			</view>
 			<!-- 脉象 -->
@@ -88,45 +105,32 @@
 				<view class="uni_option">
 					<view class="title_view">
 						<text>脉象</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(4)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
-						<input class="seach_input" type="text" value="" placeholder="请输入脉象..." @tap="openSeachModal(4)" :disabled="true"/>
-						<text class="suosou  seach_icon" style="vertical-align: middle;">&#xe609;</text>
+						<text class="addGroup" @tap="choosezyzz(4)">&#xe619;</text>
+						<text class="suosou seach_icon" style="margin-left: 40upx;" @tap="openSeachModal(4)">&#xe609;</text>
+						<!-- <image src="/pagesZhiyi/static/wzzy/add.png" class="addimg" @tap="choosezyzz(4)"></image> -->
+						<!-- <text class="xiangqing" @tap="openBzzz(4)" v-show="!mxShow&&mxArr.length!==0">&#xe68d;</text>
+						<text class="packUp" style="float: right;" @tap="mxShow=false" v-show="mxShow">&#xe63a;</text> -->
 					</view>
-					<image src="/static/wzzy/add.png" class="addimg" @tap="choosezyzz(4)"></image>
 				</view>
-				<view class="zzBtn_view">
-					<button type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in mxArr" :key="index">
+				<view class="zzBtn_view" v-show="mxConShow">
+					<!-- <button type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}"  class="zzBtn_view_btn" v-for="(item, index) in mxArr" :key="index">
 						{{ item.bzzz }}
-						<text class="remove-img"  @tap="removeMxBtn(index)">&#xe71f;</text>
-					</button>
-				</view>
-			</view>
-			<!-- 已知病名 -->
-			<view class="uni-units">
-				<view class="uni_option">
-					<view class="title_view">
-						<text>已知病名</text>
+						<text class="remove-img" @tap="removeMxBtn(index)">&#xe71f;</text>
+					</button> -->
+					<view class="hint-text" :style="{display:mxArray.length==0?'block':'none'}">
+						<text>请搜索或选择您常出现的脉搏形象与动态</text>
 					</view>
-					<view class="uni_nav">
-						<input class="seach_input" type="text" value="" placeholder="请输入病名..." @tap="openSeachModal(5)" :disabled="true"/>
-						<text class="suosou  seach_icon" style="vertical-align: middle;">&#xe609;</text>
+					<view class="uni-flex uni-row" v-for="(item, index) in mxArr" :key="index">
+						<view class="bzzz_tit"><text>{{index+1}}、</text><text>{{item.bzzz}}</text></view>
+						<view class="remove-bzzz" @tap="removeMxBtn(index)"><text class="remove" style="font-size: 40upx;color: #31b8ff;">&#xe61c;</text></view>
 					</view>
-					<!-- <image src="/static/wzzy/add.png" class="addimg" @tap="choosezyzz(5)"></image> -->
 				</view>
-				<view class="zzBtn_view">
-					<button type="default" size="mini" :style="{'padding-right':item.rmv==false?'6rpx':'38rpx'}" class="zzBtn_view_btn" v-for="(item, index) in yzbmArr" :key="index">
-						{{item}}
-						<text class="remove-img" @tap="removeYzbmBtn(index)">&#xe71f;</text>
-					</button>
-				</view>
-			</view>
-			<!-- 说明 -->
-			<view class="explain">
-				<text>{{ explain }}</text>
 			</view>
 			<view class="submit_view">
-				<button size="default" class="submitBtn" @tap="submitZybz">提 交</button>
+				<button size="default" class="submitBtn" hover-class="hoverBtn" @tap="submitZybz">提 交</button>
 			</view>
 		</view>
 		<!-- 搜索弹出框 -->
@@ -146,18 +150,60 @@
 			</view>
 			<view class="modal_content" style="color: #A5A5A5;">{{zz_con}}</view>
 			<view class="modal_ft">
-				<button class="closeBtn"  @tap="hidePopup">确 认</button>
+				<button class="closeBtn"  @tap="hidePopup">我知道了</button>
 			</view>
+		</modal>
+		<!-- 搜索层 -->
+		<modal :show="seachModal" type="esSeach" v-if="seachModal" @tap="lx_view=false,manualSeach=false,historyStatus=true">
+			<!-- <view class="modal_head">
+				<view class="zz_title">{{zz_type}}</view>
+				<view class="close_modal" @tap="seachModal=false">关闭</view>
+			</view> -->
+			<view class="modal_content">
+				<view class="uni-flex uni-row" style="height: 60upx;margin-top: 20upx;position: relative;">
+				    <input type="text" confirm-type="search"  @focus="lx_viewshow" @blur="lx_viewhide" :focus="autofocus" class="zzbx_input" @confirm="seachZzbx" v-model="zzbx" placeholder="输入关键词查询症状..." @input="keyup" />
+					<text class="rmv-btn removeInput" v-show="zzbx!==''?true:false" @tap="zzbx='',lxci=[],lx_view=false,autofocus=true,historyStatus=true,manualSeach=false">&#xe71f;</text>
+					<!-- <text class="suosou suosou_icon">&#xe609;</text> -->
+					<view class="searchBtn"><text class="suosou" @tap="seachZzbx" style="font-size: 36upx32upx;">&#xe609;</text></view>
+					<text style="font-size: 36upx30upx;position: absolute;right: 6upx;" @tap="seachModal=false">取消</text>
+				</view>
+				<view class="zz_hint" v-show="!lx_view&&(!manualSeach)">
+					主诉症状最多选择两个，若要修改，需要先删除已选择好的症状再进行搜索。
+				</view>
+				<!-- 搜索历史 -->
+				<view class="input_view" v-show="historyStatus">
+					<view class="">
+						<text class="history_seach">搜索记录</text>
+						<text class="remove_history remove" @tap="removeHistory">&#xe678;</text>
+					</view>
+					<view class="history_view">
+						<view class="history_btn" v-for="(item,index) in historyItemCopy" :key="index" @tap="btnSeach(item.name)" :style="[{display:item.display}]">
+							<text>{{item.name}}</text>
+						</view>
+						<view class="history_btn look_more" :style="[{display:more_showCopy==false?'none':'inline-block'}]" @tap="showAllHistory">更多<text class="more_icon">&#xe618;</text></view>
+					</view>
+				</view>
+				<!-- 提示词 -->
+				<view class="lx_view" v-show="lx_view">
+					<tr v-for="(item, index) in lxci" :key="index" :id="item.bzzz" class="hotWord" @tap="idSeach">{{ item.ccfz+'；'+'；'+item.zzjs+'；'+item.bzzz }}</tr>
+				</view>
+				<!-- 点击搜索按钮后显示的提示词 -->
+				<view class="manualSeachView" v-show="manualSeach" :style="{'height':scrollView}">
+					<view class="esJg_view" v-for="(item, index) in lxci" :key="index" :id="item.bzzz" @tap="idSeach">{{item.ccfz+'<'+item.zzjs+'>'}}</view>
+				</view>
+			</view>
+			<!-- <view class="modal_ft" style="margin-top:50px;width: 100%;">
+				<button class="closeBtn"  @tap="hidePopup">确 认</button>
+			</view> -->
 		</modal>
 	</view>
 </template>
 
 <script>
-import * as api from '@/common/API.js';
+import * as Api from '@/common/API.js';
 import { ajax } from '@/common/ajax.js';
 import { tokenAjax } from '@/common/ajax.js';
-import helper   from '@/common/helper.js';
-import modal    from '@/components/modal.vue'
+import modal    from '@/components/modal.vue';
 export default {
 	components:{
 		modal
@@ -208,27 +254,67 @@ export default {
 			autofocus:true,
 			historyItemCopy:[],
 			more_showCopy:false,
-			historyStatus:false
+			historyStatus:false,
+			zzbxConShow:true,
+			otherConShow:false,
+			sxConShow:false,
+			mxConShow:false,
+			yzbConShow:false,
+			subHealth:false
 		};
 	},
 	created() {
 		
 	},
 	watch: {
-			othersArray:function(newValue,oldValue){
-				this.othersArr=newValue;
-			},
 			zzbxArray:function(newValue, oldValue) {
 				this.zzbxArr=newValue;
+				console.log('主诉症状，数据更新');
+				if (this.zzbxArr.length==0) {
+					this.zzbxConShow=false;
+				}else{
+					this.zzbxConShow=true;
+				}
+				this.otherConShow=true;
 			},
-			sxArray:function(newValue,oldValue){
-				this.sxArr=newValue;
-			},
-			mxArray:function(newValue,oldValue){
-				this.mxArr=newValue;
+			othersArray:function(newValue,oldValue){
+				this.othersArr=newValue;
+				console.log('其他症状，数据更新');
+				if (this.othersArr.length==0) {
+					this.otherConShow=false;
+				}else{
+					this.otherConShow=true;
+				}
+				//this.yzbConShow=true;
 			},
 			yzbmArray:function(newValue,oldValue){
 				this.yzbmArr=newValue;
+				console.log('已知病，数据更新');
+				if (this.yzbmArr.length==0) {
+					this.yzbConShow=false;
+				}else{
+					this.yzbConShow=true;
+				}
+				//this.sxConShow=true;
+			},
+			sxArray:function(newValue,oldValue){
+				this.sxArr=newValue;
+				console.log('舌象，数据更新');
+				if (this.sxArr.length==0) {
+					this.sxConShow=false;
+				}else{
+					this.sxConShow=true;
+				}
+				//this.mxConShow=true;
+			},
+			mxArray:function(newValue,oldValue){
+				this.mxArr=newValue;
+				console.log('脉象，数据更新');
+				if (this.mxArr.length==0) {
+					this.mxConShow=false;
+				}else{
+					this.mxConShow=true;
+				}
 			},
 	},
 	computed: {//组件的计算函数
@@ -252,6 +338,28 @@ export default {
 		}
 	},
 	mounted() {//挂载到实例上去之后调用
+		//亚健康进来时，隐藏主诉症状
+		if (this.$parent.origin=="亚健康") {
+			this.subHealth=true;
+			this.otherConShow=true;
+		}
+		//快好 重新辩证进入时，如果有携带值，默认展开
+		if (this.zzbxArray.length!==0) {
+			this.zzbxShow=false
+		}
+		if (this.othersArray.length!==0) {
+			this.otherConShow=true;
+		}
+		if (this.sxArray.length!==0) {
+			this.sxConShow=true;
+		}
+		if (this.mxArray.length!==0) {
+			this.mxConShow=true;
+		}
+		if (this.yzbmArray.length!==0) {
+			this.yzbConShow=true;
+		}
+		//
 		this.zzbxArr=this.zzbxArray;
 		this.othersArr=this.othersArray;
 		this.sxArr=this.sxArray;
@@ -314,7 +422,7 @@ export default {
 				this.lx_view = false;
 				return
 			}
-			this.request(name,false,api.lxApi);
+			this.request(name,false,Api.lxApi);
 		},
 		//打开解释弹层
 		openJieshi:function(type){
@@ -332,9 +440,9 @@ export default {
 			var array=[];
 			switch (type){
 				case 1:
-					if (this.zzbxArr.length>1) {
+					if (this.zzbxArr.length>2) {
 						uni.showToast({
-							title: '主诉症状最多选择两个,请在其他症状内添加',
+							title: '主诉症状最多选择三个,请在其他症状内添加',
 							icon: 'none'
 						});
 						return 
@@ -376,10 +484,7 @@ export default {
 				uni.$emit('array',{array:array,type:type});
 			}, 100);
 			uni.navigateTo({
-				url: `/pages/result/wzzy_seach?type=${type}&array=${JSON.stringify(array)}&allArrays=${JSON.stringify(allArray)}`,
-				success: res => {},
-				fail: () => {},
-				complete: () => {}
+				url: `/pages/result/wzzy_seach?type=${type}&array=${JSON.stringify(array)}&origin=${this.$parent.origin}&allArrays=${JSON.stringify(allArray)}`
 			});
 		},
 		//关闭弹层
@@ -449,32 +554,44 @@ export default {
 			}
 			this.historyItemCopy=arr;
 			uni.setStorageSync('wzzyRecord',arr);
-			this.request(name,true,api.searchZybz);
+			this.request(name,true,Api.searchZybz);
 		},
 		/* 删除所选症状 */
 		removeZzbxBtn: function(index) {
-			if (this.zzbxArr[index].rmv==false) {
+			/* if (this.zzbxArr[index].rmv==false) {
 				return
-			}
+			} */
 			this.zzbxArr.splice(index, 1);
+			if (this.zzbxArr.length==0) {
+				this.zzbxConShow=false;
+			}
 			this.$emit('func',{array:this.zzbxArr,type:'zzbx'})
 		},
 		removeOthersBtn:function(index){
 			this.othersArr.splice(index, 1);
+			if (this.othersArr.length==0) {
+				this.otherConShow=false;
+			}
 			this.$emit('func',{array:this.othersArr,type:'others'})
 		},
 		removeSxBtn: function(index) {
-			if (this.sxArr[index].rmv==false) {
+			/* if (this.sxArr[index].rmv==false) {
 				return
-			}
+			} */
 			this.sxArr.splice(index, 1);
+			if (this.sxArr.length==0) {
+				this.sxConShow=false;
+			}
 			this.$emit('func',{array:this.sxArr,type:'sx'})
 		},
 		removeMxBtn: function(index) {
-			if (this.mxArr[index].rmv==false) {
+			/* if (this.mxArr[index].rmv==false) {
 				return
-			}
+			} */
 			this.mxArr.splice(index, 1);
+			if (this.mxArr.length==0) {
+				this.mxConShow=false;
+			}
 			this.$emit('func',{array:this.mxArr,type:'mx'})
 		},
 		removeYzbmBtn: function(index) {
@@ -482,15 +599,18 @@ export default {
 				return
 			}
 			this.yzbmArr.splice(index, 1);
+			if (this.yzbmArr.length==0) {
+				this.yzbConShow=false;
+			}
 			this.$emit('func',{array:this.yzbmArr,type:'yzbm'})
 		},
 		/* 跳转到选择病症页面 */
 		choosezyzz: function(index) {
-			if (index==1||index==2||index==4) {
+			if (index==1||index==2||index==5||index==4) {
 				if (index==1) {
-					if (this.zzbxArr.length>1) {
+					if (this.zzbxArr.length>2) {
 						uni.showToast({
-							title: '主诉症状最多选择两个,请在其他症状内添加',
+							title: '主诉症状最多选择三个,请在其他症状内添加',
 							icon: 'none'
 						});
 						return 
@@ -501,9 +621,10 @@ export default {
 				}); 
 			}else if(index==3){
 				uni.navigateTo({
-					url: `/pages/result/sxmxChooseZyzz?index=${index}&zszz=${JSON.stringify(this.zzbxArr)}`
+					url: `/pages/result/sxmxChooseZyzz?index=${index}&zszz=${JSON.stringify(this.sxArr)}`
 				}); 
 			}
+			
 		},
 		/* 将数组转换为字符串 */
 		splitArray: function(arrayName,type) {
@@ -522,170 +643,139 @@ export default {
 					}else{
 						btnArray += (arrayName[i].bzzz + '；').toString();
 					}
-				} 
-				string = btnArray.substring(0, btnArray.length - 1);
-				return string;*/
+				} */
 				if (arrayName[i].bzzz==undefined) {
-					btnArray+='；'+arrayName[i];
-				}else{
-					btnArray+='；'+arrayName[i].bzzz;
+						btnArray+='；'+arrayName[i];
+					}else{
+						btnArray+='；'+arrayName[i].bzzz;
+					}
 				}
+			string=btnArray.substr(1)
+			return string
+		},
+		bm:function(){
+			var string='';
+			for(var i=0; i<this.yzbmArray.length; i++){
+				string+=';'+this.yzbmArray[i];
 			}
-			string=btnArray.substr(1);
-			return string;
+			string=string.substr(1);
+			return string
 		},
 		/* 按症状    提交中医标症(四种)事件 */
-		submitZybz: function() {
-			let gnid=4;//辨证论治功能id=4
-			global.getUserCtrl(gnid).then(flag =>{
-				if (!flag) {
-					uni.showModal({
-						title: '提示',
-						content: '当前会员级别使用次数已达上限，请升级会员级别。',
-						showCancel: true,
-						cancelText: '取消',
-						confirmText: '确定',
-						success: res => {
-							if (res.confirm) {//跳转小程序
-							let path='/pagesD/mine/memberGrade/memberGrade';
-							let type='upgrade';
-								global.up(path,type).catch(err =>{
-									//
-								});
-							}
+		submitZybz:async function() {
+			if (this.zzbxArray.length +this.othersArray.length+this.sxArray.length + this.mxArray.length + this.yzbmArray.length<=0) {
+				uni.showModal({
+					title: '提示',
+					content: '请选择您要提交的症状',
+					showCancel: false,
+					confirmText: '确定'
+				});
+				return;
+			}
+			//先查询 使用次数是否有剩余
+			var flag=await global.getUserCtrl(4);//同步调用次数查询接口，async配合 await使用
+			if (!flag) {
+				uni.showModal({
+					title: '提示',
+					content: '当前会员级别的问症知医 次数已用尽，请升级会员级别继续使用此功能',
+					showCancel: true,
+					cancelText: '取消',
+					confirmText: '升级',
+					success: res => {
+						if (res.confirm) {
+							console.log('用户点击确定');
+							uni.navigateTo({
+								url: '/pagesD/mine/memberGrade/memberGrade',
+							});
+						} else if (res.cancel) {
+							console.log('用户点击取消');
 						}
-					});
-					return
-				}
-				if (this.zzbxArray.length +this.othersArray.length+this.sxArray.length + this.mxArray.length + this.yzbmArray.length<=0) {
-					uni.showModal({
-						title: '提示',
-						content: '请选择您要提交的症状',
-						showCancel: false,
-						confirmText: '确定'
-					});
-					return;
-				}
-				var bzbzmc = '',
-					sx = '',
-					mx = '',
-					glbm = '',
-					size=10,
-					page=0,
-					bzmc1='',
-					bzmc2='',
-					type='';
-				//将所有症状传输至广海保存至辨证论治
-				/* if (this.zzbxArray.length !== 0) {
-					var zzbx = this.splitArray(this.zzbxArray,'bzlz');
-				}
-				if (this.sxArray.length !== 0) {
-					sx = this.splitArray(this.sxArray,'bzlz');
-				}
-				if (this.mxArray.length !== 0) {
-					mx = this.splitArray(this.mxArray,'bzlz');
-				}
-				if (this.othersArray.length !== 0) {
-					bzbzmc = this.splitArray(this.othersArray,'bzlz');
-				} */
-				console.log(bzbzmc,sx,mx);
-				if (this.zzbxArray.length !== 0) {
-					var zzbx = this.splitArray(this.zzbxArray,'es');
-				}
-				if (this.sxArray.length !== 0) {
-					sx = this.splitArray(this.sxArray,'es');
-				}
-				if (this.mxArray.length !== 0) {
-					mx = this.splitArray(this.mxArray,'es');
-				}
-				if (this.othersArray.length !== 0) {
-					bzbzmc = this.splitArray(this.othersArray,'es');
-				}
-				if (this.yzbmArray.length !== 0) {
-					glbm= this.splitArray(this.yzbmArray,'es');
-				}
-				if (zzbx==undefined) {
-					zzbx=''
-				}
-				if (zzbx!=='') {
-					if(zzbx.split('；').length>1){
-						bzmc1=zzbx.split('；')[0];
-						bzmc2=zzbx.split('；')[1];
-					}else{
-						bzmc1=zzbx.split('；')[0];
-					} 
-				}
-				if (glbm=='') {//若病名为空 返回的结果需要判断zxtype类型，B：证型名称改为病名显示(glzb+glxb);Z:不处理no processing
-					uni.setStorageSync('glbmStatus',false);
+					},
+				});
+				return
+			}
+			var bzbzmc = '',
+				sx = '',
+				mx = '',
+				glbm = '',
+				size=10,
+				page=0,
+				bzmc1='',
+				bzmc2='',
+				type='';
+			if (this.zzbxArray.length !== 0) {
+				var zzbx = this.splitArray(this.zzbxArray,'es');
+			}
+			if (this.sxArray.length !== 0) {
+				sx = this.splitArray(this.sxArray,'es');
+			}
+			if (this.mxArray.length !== 0) {
+				mx = this.splitArray(this.mxArray,'es');
+			}
+			if (this.othersArray.length !== 0) {
+				bzbzmc = this.splitArray(this.othersArray,'es');
+			}
+			if (this.yzbmArray.length !== 0) {
+				glbm= this.bm();
+			}
+			if (zzbx==undefined) {
+				zzbx=''
+			}
+			if (zzbx!=='') {
+				if(zzbx.split('；').length>1){
+					bzmc1=zzbx.split('；')[0];
+					bzmc2=zzbx.split('；')[1];
 				}else{
-					uni.setStorageSync('glbmStatus',true);
+					bzmc1=zzbx.split('；')[0];
 				} 
-				console.log(bzbzmc);
+			}
+			if (glbm=='') {//若病名为空 返回的结果需要判断zxtype类型，B：证型名称改为病名显示(glzb);Z:不处理no processing
+				uni.setStorageSync('glbmStatus',false);
+			}else{
+				uni.setStorageSync('glbmStatus',true);
+			}
+			//typeInvoking值为kh时该组件为快好模块调用，值为wzzy时为问症知医调用
 				global.zxcx(bzbzmc,glbm,sx,mx,size,page,bzmc1,bzmc2,type).then(data => {
-					console.log(data);
-					uni.hideLoading();
-					if (data.data.status == 200) {
-						/* 根据是否选择了主诉症状 选择返回结果集：若未选择主诉症状，结果应使用mainbz0,选择了一个主诉症状：使用mainbz1，选择了两个症状，使用mainbz2 */
-						var zxcxList=[];
-						if (bzmc1!==''&&bzmc2=='') {//选择了一个主诉症状，使用mainbz1
-							zxcxList= data.data.data.mainbz1;
-						}else if(bzmc1==''&&bzmc2==''){//未选择主诉症状，使用mainbz0
-							zxcxList = data.data.data.mainbz0;
-						}else if(bzmc1!==''&&bzmc2!==''){//选择了两个主诉症状，使用mainbz2
-							zxcxList = data.data.data.mainbz2;
-						}
-						if (JSON.stringify(zxcxList)=='{}') {
-							uni.showToast({
-								title: '暂无匹配结果',
-								icon:'none'
-							});
-							return
-						}
-						zxcxList=zxcxList.zxcxList;
-						if (zxcxList.length==0) {
-							uni.showToast({
-								title: '暂无匹配结果',
-								icon:'none'
-							});
-							return
-						}
-						for (var i = 0; i < zxcxList.length; i++) {
-							zxcxList[i].heightLcbx=(zxcxList[i].highlightMap.bzjczz==undefined?'':zxcxList[i].highlightMap.bzjczz)+(zxcxList[i].highlightMap.bzlcbx==undefined?'':zxcxList[i].highlightMap.bzlcbx)+(zxcxList[i].highlightMap.sx==undefined&&zxcxList[i].sx==null?'':zxcxList[i].highlightMap.sx==undefined?zxcxList[i].sx:zxcxList[i].highlightMap.sx)+(zxcxList[i].highlightMap.mx==undefined&&zxcxList[i].mx==null?'':zxcxList[i].highlightMap.mx==undefined?zxcxList[i].mx:zxcxList[i].heightMap.mx);
-							zxcxList[i].heightGlxb=zxcxList[i].highlightMap.glxb==undefined?null:zxcxList[i].highlightMap.glxb;
-							zxcxList[i].heightGlzb=zxcxList[i].highlightMap.glzb==undefined?null:zxcxList[i].highlightMap.glzb;
-						}
-						global.againWzzyList=zxcxList;
-						/* 将选则好的症状传递给helper.yxzz  */
-						var yxzzArray = this.zzbxArray.concat(this.sxArray.concat(this.mxArray.concat(this.yzbmArray.concat(this.othersArray))));
-						global.yxzz = yxzzArray;/* 已选症状集合 */
-						//查询完 次数减1
-						global.setBzlzTime();
-						uni.navigateTo({
-							url: '/pages/bzlzResult/bzlzResult'
-						});
-					} else if(data.data.status==301){
-						uni.showModal({
-							title: '提示',
-							content: '暂未查询出您要查询的病症',
-							showCancel: false,
-							cancelText: '',
-							confirmText: '确定'
-						});
-					}else if(data.data.status==500){
-						uni.showToast({
-							title: '服务器内部错误'
-						})
-					}else if(data.data.status==null){
-						uni.showModal({
-							title: '提示',
-							content: '暂未查询出您要查询的病症',
-							showCancel: false,
-							cancelText: '',
-							confirmText: '确定'
-						});
+					/* 根据是否选择了主诉症状 选择返回结果集：若未选择主诉症状，结果应使用mainbz0,选择了一个主诉症状：使用mainbz1，选择了两个症状，使用mainbz2 */
+					var zxcxList=[];
+					if (bzmc1!==''&&bzmc2=='') {//选择了一个主诉症状，使用mainbz1
+						zxcxList= data.data.data.mainbz1;
+					}else if(bzmc1==''&&bzmc2==''){//未选择主诉症状，使用mainbz0
+						zxcxList = data.data.data.mainbz0;
+					}else if(bzmc1!==''&&bzmc2!==''){//选择了两个主诉症状，使用mainbz2
+						zxcxList = data.data.data.mainbz2;
 					}
+					if (JSON.stringify(zxcxList)=='{}') {
+						uni.showToast({
+							title: '暂无匹配结果',
+							icon:'none'
+						});
+						return
+					}
+					zxcxList=zxcxList.zxcxList;
+					if (zxcxList.length==0) {
+						uni.showToast({
+							title: '暂无匹配结果',
+							icon:'none'
+						});
+						return
+					}
+					for (var i = 0; i < zxcxList.length; i++) {
+						zxcxList[i].heightLcbx=(zxcxList[i].highlightMap.bzjczz==undefined?'':zxcxList[i].highlightMap.bzjczz)+(zxcxList[i].highlightMap.bzlcbx==undefined?'':zxcxList[i].highlightMap.bzlcbx)+(zxcxList[i].highlightMap.sx==undefined&&zxcxList[i].sx==null?'':zxcxList[i].highlightMap.sx==undefined?zxcxList[i].sx:zxcxList[i].highlightMap.sx)+(zxcxList[i].highlightMap.mx==undefined&&zxcxList[i].mx==null?'':zxcxList[i].highlightMap.mx==undefined?zxcxList[i].mx:zxcxList[i].heightMap.mx);
+						zxcxList[i].heightGlxb=zxcxList[i].highlightMap.glxb==undefined?null:zxcxList[i].highlightMap.glxb;
+						zxcxList[i].heightGlzb=zxcxList[i].highlightMap.glzb==undefined?null:zxcxList[i].highlightMap.glzb;
+					}
+					global.againWzzyList=zxcxList;
+					/* 将选则好的症状传递给helper.yxzz  */
+					var yxzzArray = this.zzbxArray.concat(this.sxArray.concat(this.mxArray.concat(this.yzbmArray.concat(this.othersArray))));
+					global.yxzz = yxzzArray;/* 已选症状集合 */
+					//查询完 次数减1
+					global.setBzlzTime();
+					uni.navigateTo({
+						url: `/pages/bzlzResult/bzlzResult`
+					});
 				})
-			})
+			
 		},
 		/* 症状表现搜索请求方法 */
 		request(name,flag,url) {
@@ -737,28 +827,27 @@ export default {
 <style scoped>
 page {
 	height: auto;
-	background: #CCCCCC;
 }
 .uni_option {
 	position: relative;
 	line-height: 100upx;
-	padding-right: 30upx;
-	padding-left: 30upx;
+	padding-right: 20upx;
+	padding-left: 20upx;
 }
 .title_view{
-	width:25%;
+	width:40%;
 	display: inline-flex;
 }
 .addimg {
 	top: 16upx;
 	right: 30upx;
-	width: 60upx;
-	height: 60upx;
-	position: absolute;
+	width: 66upx;
+	height: 66upx;
+	margin-left: 70upx;
+	/* position: absolute; */
 	vertical-align: middle;
 }
 .uni_tabtit {
-	font-size: 36upx;
 	font-weight: 700;
 	line-height: 2.5;
 	padding-left: 30upx;
@@ -770,43 +859,35 @@ page {
 	height: 2em;
 	width: 65%;
 	background: #f4f4f4;
-	font-size: 30upx;
 	border-radius: 10upx;
 	padding-right: 90upx;
 	padding-left: 20upx;
 	line-height: 2em;
 }
 .uni_nav {
-	width: 60%;
-	margin-left: 20upx;
-	position: relative;
-	display: inline-flex;
+	width: 30%;
+	display: inline-block;
+	/* position: relative;
+	display: inline-flex; */
 }
 .seach_input{
 	width: 100%;
 	border-radius: 12px;
 	background: #f4f4f4;
 	display: inline-flex;
-	font-size: 32rpx;
 	padding: 10rpx;
 	border-radius: 10rpx;
 	padding-left: 60rpx;
 }
 .seach_icon{
-	top: 16upx;
-	left: 12upx;
-	color: #CCCCCC;
-	position: absolute;
-	vertical-align: middle;
-}
-.explain {
-	color: #a5a5a5;
-	padding-left: 30upx;
-	font-size: 28upx;
-	line-height: 100upx;
+	font-size: 44upx;
+	/* position: absolute;
+	vertical-align: middle; */
 }
 .submit_view{
 	width: 100%;
+	margin-top: 5%;
+	margin-bottom: 10%;
 }
 .color-tag {
 	width: 50upx;
@@ -815,10 +896,14 @@ page {
 .submitBtn {
 	width: 60%;
 	line-height: 2;
+	color: #1296db;
+	font-size: 38upx;
+	background: #FFFFFF;
 	border-radius: 40upx;
-	margin-top: 50upx;
-	color: #ffffff;
-	background: #1296db;
+	border: 2upx solid #1296DB;
+}
+.hoverBtn{
+	background: #F4F4F4;
 }
 .uni_option_serchBtn {
 	height: 100%;
@@ -838,11 +923,36 @@ button::after {
 	border: none;
 }
 .uni-units {
+	margin: 0upx 4upx 6upx 4upx;
 	background: #ffffff;
-	border-bottom: 2upx solid #cccccc;
+	border-bottom: 2upx solid #e4e4e4;
 }
 .zzBtn_view {
-	padding: 0upx 30upx;
+	min-height: 60upx;
+	overflow: auto;
+	margin: 10upx 20upx;
+	margin-bottom: 0upx;
+	background: #FFFFFF;
+	transition-duration:0.5s;
+	-webkit-transition-duration: 0.5s;
+}
+.hint-text{
+	color: #868686;
+	display: block;
+	font-size: 32upx;
+	padding: 0upx 10upx;
+}
+.bzzz_tit{
+	width: 94%;
+	font-size: 36upx;
+	overflow: auto;
+	line-height: 2.1;
+	white-space: nowrap;
+}
+.remove-bzzz{
+	width: 6%;
+	color: #666666;
+	text-align: center;
 }
 /* #ifdef MP-WEIXIN */
 .lx_view {
@@ -857,7 +967,7 @@ button::after {
 	z-index: 2000;
 }
 .hotWord{
-	font-size: 30upx;
+	font-size: 36upx;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -871,7 +981,7 @@ button::after {
 .zz_hint{
 	padding-top: 40upx;
 	color: #A5A5A5;
-	font-size: 30upx;
+	font-size: 36upx;
 }
 /* #endif */
 
@@ -891,7 +1001,7 @@ button::after {
 /* #endif */
 .zzBtn_view_btn {
 	color: #056496;
-	font-size: 34rpx;
+	font-size: 36upx;
 	background: #FFFFFF;
 	border: 1px solid #056496;
 	padding: 0upx 6upx;
@@ -910,29 +1020,34 @@ button::after {
 	position: absolute;
 	right: 20upx;
 	top: 20upx;
-	font-size: 16px;
+	font-size: 36upx;
 }
 .modal_content{
-	font-size: 30upx;
+	font-size: 36upx;
 	padding: 20upx;
+	height: 40%;
+	overflow: auto;
 }
 .zz_title{
 	font-weight: 700;
-	font-size: 32upx;
+	font-size: 36upx;
 	text-align: center;
 }
 .esJg_view{
-	font-size: 30upx;
+	font-size: 36upx;
 	white-space: nowrap;
 	border-bottom: 2upx solid #CCCCCC;
 	padding: 20upx 0upx 10upx 0upx;
 }
 .modal_ft{
 	text-align: center;
+	font-size: 36upx;
 }
 .closeBtn{
-	width: 60%;
+	width: 40%;
 	color: #fff;
+	line-height: 2;
+	font-size: 36upx;
 	background: #1296db;
 	border-radius: 40upx;
 	margin-bottom: 15px;
@@ -942,7 +1057,7 @@ button::after {
 	right: 180upx;
 	top: 2upx;
 	color: #CCCCCC;
-	font-size: 32upx;
+	font-size: 36upx;
 	z-index: 1003;
 }
 .suosou_icon{
@@ -953,7 +1068,7 @@ button::after {
 }
 .searchBtn{
 	color: #4780d0;
-	font-size: 30upx;
+	font-size: 36upx;
 	position: absolute;
 	right: 96upx;
 	height: 2em;
@@ -972,11 +1087,11 @@ button::after {
 	}
 .history_seach{
 	color: #888888;
-	font-size: 30upx;
+	font-size: 36upx;
 }
 .remove_history{
 	color: #888888;
-	font-size: 30upx;
+	font-size: 36upx;
 	float: right;
 }
 .history_view{
@@ -986,7 +1101,7 @@ button::after {
 }
 .history_btn{
 	color: #5a5a5a;
-	font-size: 28upx;
+	font-size: 36upx;
 	padding: 16upx;
 	line-height: 1;
 	background: #f4f4f4;
