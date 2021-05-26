@@ -61,7 +61,7 @@
 				<!-- 症状选择 -->
 				<view style="padding-top: 20upx;height: calc(100% - 110upx);overflow: auto;" v-show="bzzzShow">
 					<view class="" style="height: 80%;overflow: auto;text-align: center;">
-						<view class="xgzzBtn" v-for="(item,index) in xgzzArr" :key="index" hover-class="btnHover" :class="item.checked?'cfzzChecked':'xgzzBtn'" @tap="openCon(item)">
+						<view class="xgzzBtn" v-for="(item,index) in xgzzArr" :key="index" hover-class="btnHover" :class="item.checked?'cfzzChecked':'xgzzBtn'" @tap="getRelationInfo(item)">
 							<text style="margin-right: 6upx;">{{item.sjzz}}</text>
 							<!-- <text class="jieshi question" @tap="zzjsModal=true">&#xe652;</text> -->
 						</view>
@@ -289,52 +289,7 @@
 				}
 				allArrayString=allArrayString.substr(1);
 				console.log('即将搜索'+'“'+allArrayString+'”'+'的相关症状');
-				global.getRelation(allArrayString,this.type).then(res =>{
-					var arr=res.data;
-					if (arr==''||Object.keys(arr).length==0) {
-						this.hotWordModal=false;
-						return
-					}
-					this.relation=true;
-					for (var key in arr) {
-						var obj={
-							sjzz:key,
-							bzjs1:[],
-							cfzz:[],
-							bzzz:[],
-							zzjs:[],
-							checked:false
-						}
-						//提取症状解释
-						for (var i = 0; i < arr[key].length; i++) {
-							obj.bzjs1.push(arr[key][i].split('#')[0]);
-						}
-						//提取拆分症状
-						for (var i = 0; i < arr[key].length; i++) {
-							var cfzzobj={
-								value:arr[key][i].split('#')[1],
-								checked:false
-							}
-							obj.cfzz.push(cfzzobj);
-						}
-						//提取bzzz
-						for (var i = 0; i < arr[key].length; i++) {
-							obj.bzzz.push(arr[key][i].split('#')[2]);
-						}
-						//提取拆分症状的 症状解释zzjs
-						for (var i = 0; i < arr[key].length; i++) {
-							obj.zzjs.push(arr[key][i].split('#')[3]);
-						}
-						this.xgzzArr.push(obj);
-					}
-					console.log(this.xgzzArr);
-					//this.historyStatus=false;
-					this.hotWordModal=true;
-					this.historyAndFamiliar=false;
-					//this.glzz=true;
-				}).catch(err =>{
-					
-				})
+				this.getRelation(allArrayString);
 			}
 		},
 		created() {
@@ -349,6 +304,114 @@
 			}
 		},
 		methods: {
+			//关联症状查询***********************************
+			getRelation:function(allArrayString){
+				if (allArrayString==undefined||allArrayString=='') {
+					allArrayString=this.allArrayString;
+				}
+				global.getRelation(allArrayString,this.type).then(res =>{
+					var arr=res.data;
+					if (arr==''||Object.keys(arr).length==0) {
+						return
+					}
+					this.relation=true;
+					this.hotWordModal=true;
+					for (var key in arr) {
+						var obj={
+							sjzz:key,
+							rel_bzzz:arr[key],
+							bzjs1:[],
+							cfzz:[],
+							bzzz:[],
+							zzjs:[],
+							checked:false
+						}
+						this.xgzzArr.push(obj);
+					}
+					console.log(this.xgzzArr);
+					//this.historyStatus=false;
+					this.historyAndFamiliar=false;
+					//this.glzz=true;
+				}).catch(err =>{
+					
+				})
+			},
+			//获取关联症状的具体属性*****************************************
+			getRelationInfo:function(item){
+				console.log(item);
+				this.selectedBzzz=item;
+				//如果当前数据主症 已选中 点击则取消选中
+				if (this.selectedBzzz.checked) {
+					this.sjzzCheckedNum-=1;
+					this.selectedBzzz.checked=false;
+					var cfzz=this.selectedBzzz.cfzz;
+					for (var i = 0; i < cfzz.length; i++) {
+						cfzz[i].checked=false;
+					}
+				}else{
+					//主诉症状 个数限制
+					if (this.type==1) {
+						if (this.zzbxArray.length+this.sjzzCheckedNum>=3) {
+							uni.showToast({
+								title: '主诉症状最多可选三个',
+								icon: 'none'
+							});
+							return
+						}
+					}
+					//如果 当前主症下的属性都是空，需要发起请求
+					if (this.selectedBzzz.cfzz.length+this.selectedBzzz.bzjs1.length+this.selectedBzzz.bzzz.length+this.selectedBzzz.zzjs.length<=0) {
+						var rel_bzzz=item.rel_bzzz;
+						global.getRelationInfo(rel_bzzz,this.type).then(res =>{
+							console.log(res);
+							var xgzzArr=this.xgzzArr;
+							var index=null;
+							for (var i = 0; i < xgzzArr.length; i++) {
+								if (xgzzArr[i].rel_bzzz==rel_bzzz) {
+									index=i;
+								}
+							}
+							var arr=res.data;
+							//提取症状解释
+							for (var i = 0; i < arr.length; i++) {
+								this.xgzzArr[index].bzjs1.push(arr[i].split('#')[0]);
+							}
+							//提取拆分症状
+							for (var i = 0; i < arr.length; i++) {
+								var cfzzobj={
+									value:arr[i].split('#')[1],
+									checked:false
+								}
+								this.xgzzArr[index].cfzz.push(cfzzobj);
+							}
+							//提取bzzz
+							for (var i = 0; i < arr.length; i++) {
+								this.xgzzArr[index].bzzz.push(arr[i].split('#')[2]);
+							}
+							//提取拆分症状的 症状解释zzjs
+							for (var i = 0; i < arr.length; i++) {
+								this.xgzzArr[index].zzjs.push(arr[i].split('#')[3]);
+							}
+							this.selectedBzzz=this.xgzzArr[index];
+							//如果 当前数据主症下只有一条拆分症状 cfzz 则弹出解释弹层
+							if (this.selectedBzzz.cfzz.length<=1) {
+								this.sjzzShow=true;
+							}else{
+								this.zzjs='';
+								this.bzzzConShow=true;
+							}
+						})
+					}else{
+						//如果 当前数据主症下只有一条拆分症状 cfzz 则弹出解释弹层
+						if (this.selectedBzzz.cfzz.length<=1) {
+							this.sjzzShow=true;
+						}else{
+							this.zzjs='';
+							this.bzzzConShow=true;
+						}
+					}
+				}
+			},
 			//关闭热词提示框
 			closeLxView:function(){
 				this.lx_view=false
@@ -504,37 +567,6 @@
 						break;
 					default:
 						break;
-				}
-			},
-			//点击 数据主症打开属性*************************************
-			openCon:function(item){
-				this.selectedBzzz=item;
-				//如果当前数据主症 已选中 点击则取消选中
-				if (this.selectedBzzz.checked) {
-					this.sjzzCheckedNum-=1;
-					this.selectedBzzz.checked=false;
-					var cfzz=this.selectedBzzz.cfzz;
-					for (var i = 0; i < cfzz.length; i++) {
-						cfzz[i].checked=false;
-					}
-				}else{
-					//主诉症状 个数限制
-					if (this.type==1) {
-						if (this.zzbxArray.length+this.sjzzCheckedNum>=3) {
-							uni.showToast({
-								title: '主诉症状最多可选三个',
-								icon: 'none'
-							});
-							return
-						}
-					}
-					//如果 当前数据主症下只有一条拆分症状 cfzz 则弹出解释弹层
-					if (this.selectedBzzz.cfzz.length<=1) {
-						this.sjzzShow=true;
-					}else{
-						this.zzjs='';
-						this.bzzzConShow=true;
-					}
 				}
 			},
 			//数据主症 解释弹层 确定事件*************************************************************************
@@ -960,7 +992,7 @@
 	color: #ccc;
 	position: absolute;
 	left: 5px;
-	top: 7px;
+	top: 25%;
 }
 .searchBtn{
 	color: #4780d0;

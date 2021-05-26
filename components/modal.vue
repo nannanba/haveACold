@@ -160,14 +160,14 @@
 		transform: translate(-50%, -50%);
 		}
 	.uni-popup-jeishi {
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		height: 40%;
 		display: flex;
 		flex-direction: column;
-		width: 100%;
 		overflow: scroll;
-		top: 78%;
-		left: 50%;
 		border-top-left-radius: 30upx;
 		border-top-right-radius: 30upx;
-		transform: translate(-50%, -50%);
 		}
 </style>

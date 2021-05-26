@@ -895,6 +895,38 @@ import App    from '@/App.vue';
 			})
 		})
 	}
+	//获取关联症状的详细内容*******************************
+	global.getRelationInfo=function(name,type){
+		var types=null;
+		switch (type){
+			case 1:case 2:
+				types=0
+				break;
+			case 3:
+				types=1
+				break;
+			case 4:
+				types=2
+				break;		
+			default:
+				break;
+		}
+		return new Promise(function(resolve,rej){
+			tokenAjax({
+				url:api.getRelationInfo,
+				data:{
+					name:encodeURI(name),
+					type:types
+				},
+				success:res =>{
+					resolve(res);
+				},
+				fail:err=>{
+					rej(rej);
+				}
+			})
+		})
+	}
 	//获取 中西医病名列表************************************************************************
 	global.getZbxb=function(name){
 		return new Promise(function(resolve,rej){

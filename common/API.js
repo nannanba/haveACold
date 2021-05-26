@@ -37,6 +37,7 @@ export const gethistory ='https://ronyun.com/yyjk/kh/gethistory';//获取问症�
 export const gethistoryById ='https://ronyun.com/yyjkkh/gethistoryById';//问症历史详情
 export const saveEsResult ='https://ronyun.com/yyjkkh/saveEsResult';//
 export const getRelation='https://ronyun.com/yyjk/sym/getRelation';//问症知医 搜索相关症状
+export const getRelationInfo='https://ronyun.com/yyjk/sym/getRelationInfo';//问症知医 获取相关症状的详细内容
 export const getSymptomByNameAndType='https://ronyun.com/yyjk/kh/getSymptomByNameAndType';//问症知医 搜索相关症状
 export const findIdNameByName='https://ronyun.com/yyjk/disease/findIdNameByName';//问症知医 搜索病名
 export const getSymptomByType ='https://ronyun.com/yyjk/kh/getSymptomByType';//问症知医根据type选择症状

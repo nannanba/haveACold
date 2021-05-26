@@ -6,7 +6,7 @@
 				<view class="uni_option">
 					<view class="title_view">
 						<text>主诉症状</text>
-						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(1)">&#xe652;</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;color: #31b8ff;" @tap="openJieshi(1)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
 						<text class="addGroup" @tap="choosezyzz(1)">&#xe619;</text>
@@ -29,7 +29,7 @@
 					<view class="title_view">
 						<text v-if="subHealth">日常症状</text>
 						<text v-else>其他症状</text>
-						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(2)">&#xe652;</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;color: #31b8ff;" @tap="openJieshi(2)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
 						<text class="addGroup" @tap="choosezyzz(2)">&#xe619;</text>
@@ -56,7 +56,7 @@
 				<view class="uni_option">
 					<view class="title_view">
 						<text>已知病</text>
-						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(5)">&#xe652;</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;color: #31b8ff;" @tap="openJieshi(3)">&#xe652;</text>
 					</view>
 					<view class="uni_nav" style="text-align: left;">
 						<text class="suosou seach_icon" style="margin-left: 80upx;" @tap="openSeachModal(5)">&#xe609;</text>
@@ -79,7 +79,7 @@
 				<view class="uni_option">
 					<view class="title_view">
 						<text>舌象</text>
-						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(3)">&#xe652;</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;color: #31b8ff;" @tap="openJieshi(4)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
 						<text class="addGroup" @tap="choosezyzz(3)">&#xe619;</text>
@@ -105,7 +105,7 @@
 				<view class="uni_option">
 					<view class="title_view">
 						<text>脉象</text>
-						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;" @tap="openJieshi(4)">&#xe652;</text>
+						<text class="jieshi" style="padding: 0upx 20upx 0upx 10upx;color: #31b8ff;" @tap="openJieshi(5)">&#xe652;</text>
 					</view>
 					<view class="uni_nav">
 						<text class="addGroup" @tap="choosezyzz(4)">&#xe619;</text>
@@ -429,9 +429,18 @@ export default {
 			if (type==1) {
 				this.zz_type='主诉症状';
 				this.zz_con='主诉症状就是本次就诊的最主要原因，包括主要症状、体征及持续时间，最多不超过两个。';
-			}else{
+			}else if(type==2){
 				this.zz_type='其他症状';
 				this.zz_con='其他症状就是主诉症状以外的其他症状。';
+			}else if(type==3){
+				this.zz_type='已知病名';
+				this.zz_con='搜索选择您自身已了解的病症。';
+			}else if(type==4){
+				this.zz_type='舌象';
+				this.zz_con='舌象包括舌质和舌苔变化，透过舌象的观察来了解和认识疾病的本质和发展。';
+			}else{
+				this.zz_type='脉象';
+				this.zz_con='脉象，是指脉搏的快慢、强弱、深浅的情，指脉搏的形象与动态';
 			}
 			this.jieshiModal=true;
 		},

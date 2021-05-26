@@ -84,6 +84,7 @@
 			console.log('初始化加载...');
 			global.clickNum=0;//多选框点击次数
 			global.groupPro=[];//症状数组清空
+			global.titleArray=[];
 			var bmId=parseInt(e.bmId)+1;
 			this.bmId=bmId;
 			this.getWz(bmId,this.groupNo);
@@ -122,9 +123,12 @@
 					});
 					return
 				} 
+				/* uni.redirectTo({
+					url: '/pages/historyCopy/historyCopy',
+				}); */
 				uni.navigateTo({
 					url: '/pages/historyCopy/historyCopy',
-				});
+				})
 			},
 			//二级选项点击==========================================================================
 			radioClick:function(item3,item2){
@@ -814,7 +818,7 @@
 								global.flag=jump[2];
 								this.getWz(this.bmId,jump[0],jump[1]);
 							}else{
-								uni.navigateTo({
+								uni.redirectTo({
 									url: `/pages/result/result?status=1`,
 								});
 							}

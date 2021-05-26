@@ -136,6 +136,10 @@
 		<view class="xtGuanzhu_view">
 			<official-account></official-account>
 		</view>
+		<!-- 打赏图 -->
+		<view class="xt_dashangview">
+			<image src="/static/pay.jpg" mode="" class="xt_dashangimg" @tap="playing"></image>
+		</view>
 		<!-- 跳转小程序 -->
 		<view class="skip_view uni-flex uni-row" style="text-align: center;">
 			<view class="" :style="{width:saveShow?'50%':'60%'}" style="margin: auto;">
@@ -146,10 +150,6 @@
 				<button v-if="showWHo" class="save_result" open-type="getPhoneNumber" @getphonenumber="getphoneAndSaveJg">保 存</button>
 				<button v-else class="save_result" @tap="saveResult">保 存</button>
 			</view>
-		</view>
-		<!-- 打赏图 -->
-		<view class="xt_dashangview">
-			<image src="/static/pay.jpg" mode="" class="xt_dashangimg" @tap="playing"></image>
 		</view>
 		<!-- 底部说明 -->
 		<!-- <view class="footer">

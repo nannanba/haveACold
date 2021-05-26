@@ -502,7 +502,7 @@
 							delta: 1
 						});
 					}else{
-						uni.navigateTo({
+						uni.reLaunch({
 							url: `/pages/result/result?status=0`,
 						});
 					}

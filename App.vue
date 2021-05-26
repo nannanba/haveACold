@@ -150,4 +150,11 @@
 		font-family: 'w-iconfont';
 		font-size: 20px;
 	}
+	/* 急症自助 **************************************************************************************************************************/
+	.hot_icon{
+		color: red;
+		font-size: 32upx;
+		margin-left: 10upx;
+		font-family: 'w-iconfont';
+	}
 </style>
