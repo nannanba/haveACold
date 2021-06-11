@@ -2,7 +2,7 @@
 	<view style="height: 100%;" @click="closeLxView">
 		<view class="modal_content" style="height: calc(100% - 40upx);">
 			<view class="uni-flex uni-row" style="height: 80upx;position: relative;background: #FFFFFF;">
-			    <input type="text" confirm-type="search"  @click.stop="lx_viewshow"  :focus="true" class="zzbx_input" @confirm="seachZzbx" v-model="zzbx" :placeholder="placeholder" @input="keyup" />
+			    <input type="text" confirm-type="search"  @click.stop="lx_viewshow"  :focus="autofocus" class="zzbx_input" @confirm="seachZzbx" v-model="zzbx" :placeholder="placeholder" @input="keyup" />
 				<text class="rmv-btn removeInput" v-show="zzbx!==''?true:false" @tap="zzbx='',lxci=[],lx_view=false,autofocus=true,historyStatus=true,manualSeach=false">&#xe71f;</text>
 				<text class="suosou suosou_icon">&#xe609;</text> 
 				<!-- <view class="searchBtn"><text class="suosou" @tap="seachZzbx" style="font-size: 36upx;">&#xe609;</text></view> -->
@@ -26,7 +26,7 @@
 				<view class="esJg_view" v-for="(item, index) in lxci" :key="index" :id="item.bzzz" @click.stop="idSeach">{{item.cfzz+(item.zzjs==null||item.zzjs=='null'||item.zzjs==''?'':'<'+item.zzjs+'>')}}</view>
 			</view>
 			<view class="zz_hint" v-show="!lx_view&&(!manualSeach)&&(type==1)">
-				主诉症状最多选择两个，若要修改，需要先删除已选择好的症状再进行搜索。
+				主诉症状最多选择三个。
 			</view>
 			<!-- 搜索历史 -->
 			<view class="input_view" v-show="historyAndFamiliar">
@@ -54,26 +54,45 @@
 				</view>
 			</view>
 			<!-- 相关症状-->
-			<view v-show="hotWordModal" :style="{height:(type==1&&!lx_view&&(!manualSeach)?' calc(100% - 100px)':' calc(100% - 40px)')}" style="overflow: hidden;">
-				<view style="padding:4upx 20upx;border-bottom:1upx solid #CCCCCC;height: 80upx;line-height: 80upx;">
+			<view v-show="hotWordModal" :style="{height:(type==1&&!lx_view&&(!manualSeach)?' calc(100% - 75px)':' calc(100% - 40px)')}" style="overflow: hidden;">
+				<view style="border-bottom:1upx solid #CCCCCC;height: 80upx;line-height: 80upx;">
 					<text style="font-weight: 500;font-size: 36upx;">| 请选择符合您的症状</text>
 				</view>
 				<!-- 症状选择 -->
-				<view style="padding-top: 20upx;height: calc(100% - 110upx);overflow: auto;" v-show="bzzzShow">
-					<view class="" style="height: 80%;overflow: auto;text-align: center;">
+				<view style="padding-top: 20upx;height: calc(100% - 110upx);overflow: auto;" v-if="type==1||type==2||relation" v-show="bzzzShow">
+					<scroll-view :scroll-y="true" class="" style="height: 85%;overflow: auto;">
 						<view class="xgzzBtn" v-for="(item,index) in xgzzArr" :key="index" hover-class="btnHover" :class="item.checked?'cfzzChecked':'xgzzBtn'" @tap="getRelationInfo(item)">
 							<text style="margin-right: 6upx;">{{item.sjzz}}</text>
 							<!-- <text class="jieshi question" @tap="zzjsModal=true">&#xe652;</text> -->
+							<text class="sjzzNum" v-show="item.sjzzNum==0?false:true">{{item.sjzzNum}}</text>
 						</view>
-					</view>
-					<view style="margin-top: 40upx;"><button class="sbmitCheckedBzzz" @tap="submitSjzz">确 定</button></view>
+					</scroll-view>
+					<view style="padding-top: 7%;"><button class="sbmitCheckedBzzz" @tap="submitSjzz">确 定</button></view>
+				</view>
+				<!-- 舌象脉象 -->
+				<view style="padding-top: 20upx;height: calc(100% - 110upx);overflow: auto;" v-else-if="type==3||type==4" v-show="bzzzShow">
+					<scroll-view :scroll-y="true" style="height: 85%;overflow: auto;padding-top: 10upx;padding-bottom: 10upx;">
+						<view class="xgzzBtn" v-for="(item,index) in xgzzArr" :key="index" hover-class="btnHover" :id="item.sjzz" :class="item.checked?'cfzzChecked':'xgzzBtn'" @tap="getRelationInfo(item)">
+							<text style="margin-right: 6upx;">{{item.sjzz}}</text>
+						</view>
+					</scroll-view>
+					<view style="border-top: 2upx solid #F1F1F1;padding-top: 6%;"><button class="sbmitCheckedBzzz" @tap="submitSjzz">确 定</button></view>
+				</view>
+				<!-- 已知病 -->
+				<view style="padding-top: 20upx;height: calc(100% - 110upx);overflow: auto;" v-else-if="type==5" v-show="bzzzShow">
+					<scroll-view :scroll-y="true" style="height: 85%;overflow: auto;padding-top: 10upx;padding-bottom: 10upx;">
+						<view class="xgzzBtn" v-for="(item,index) in lxci" :key="index" hover-class="btnHover" :id="item.name" :class="item.checked?'cfzzChecked':'xgzzBtn'" @tap="checkBm(item)">
+							<text style="margin-right: 6upx;">{{item.name+'('+item.type+')'}}</text>
+						</view>
+					</scroll-view>
+					<view style="border-top: 2upx solid #F1F1F1;padding-top: 6%;"><button class="sbmitCheckedBzzz" @tap="submitBm">确 定</button></view>
 				</view>
 			</view>
 			<!-- 症状属性弹层 -->
 			<modal :show="bzzzConShow" type="zzjsModal" @hidePopup="bzzzConShow=false">
 				<view class="modal-heard"><text style="font-weight: 700;font-size: 36upx;">{{selectedBzzz.sjzz}}</text></view>
 				<view class="modal-content">
-					<view style="border-bottom: 2upx solid #CCCCCC;height:50upx;max-height: 100upx;overflow: auto;padding-top: 10upx;padding-bottom: 10upx;text-align: center;">
+					<view  v-show="selectedBzzz.bzjs1[0]==undefined?false:true" style="border-bottom: 2upx solid #CCCCCC;height:50upx;max-height: 100upx;overflow: auto;padding-top: 10upx;padding-bottom: 10upx;text-align: center;">
 						<text>{{selectedBzzz.bzjs1[0]}}</text>
 					</view>
 					<view style="padding: 10upx 0upx;">请选择细分症状或属性：</view>
@@ -90,7 +109,8 @@
 			<modal :show="sjzzShow" type="sjzzShow" @hidePopup="sjzzShow=false">
 				<view class="modal-heard"><text style="font-weight: 700;font-size: 36upx;">{{selectedBzzz.sjzz}}</text></view>
 				<view class="modal-content" style="height: 130upx;line-height: 130upx;margin-bottom:80upx;text-align: center;">
-					<text>{{selectedBzzz.bzjs1[0]}}</text>
+					<text v-if="relation">{{selectedBzzz.bzjs1[0]}}</text>
+					<text v-else>{{selectedBzzz.zzjs[0]}}</text>
 				</view>
 				<view class="modal-foot uni-flex uni-row">
 					<view style="width: 50%;"><button class="close-modal" @tap="sjzzShow=false">取 消</button></view>
@@ -314,11 +334,13 @@
 					if (arr==''||Object.keys(arr).length==0) {
 						return
 					}
+					this.autofocus=false;
 					this.relation=true;
 					this.hotWordModal=true;
 					for (var key in arr) {
 						var obj={
-							sjzz:key,
+							sjzz:key.split('#')[0],
+							sjzzNum:key.split('#')[1],
 							rel_bzzz:arr[key],
 							bzjs1:[],
 							cfzz:[],
@@ -360,7 +382,7 @@
 						}
 					}
 					//如果 当前主症下的属性都是空，需要发起请求
-					if (this.selectedBzzz.cfzz.length+this.selectedBzzz.bzjs1.length+this.selectedBzzz.bzzz.length+this.selectedBzzz.zzjs.length<=0) {
+					if (this.selectedBzzz.cfzz.length+this.selectedBzzz.bzzz.length+this.selectedBzzz.zzjs.length<=0) {
 						var rel_bzzz=item.rel_bzzz;
 						global.getRelationInfo(rel_bzzz,this.type).then(res =>{
 							console.log(res);
@@ -423,12 +445,12 @@
 			},
 			/* 输入框 得到焦点  */
 			 lx_viewshow:function(){
-					if(this.lxci.length!==0){
-					this.lx_view=true;
+					//if(this.lxci.length!==0){
+					this.lx_view=false;
 					this.glzz=false;
 					this.manualSeach=false;
 					this.historyStatus=false;
-					}
+					//}
 					this.hotWordModal=false;
 					this.historyAndFamiliar=true;
 				}, 
@@ -698,6 +720,43 @@
 					delta: 1
 				});
 			},
+			//已知病 点击选中*******************************************
+			checkBm:function(item){
+				var arr=this.lxci;
+				for (var i = 0; i < arr.length; i++) {
+					if (arr[i].id==item.id) {
+						this.lxci[i].checked=!this.lxci[i].checked;
+						break
+					}
+				}
+			},
+			//已知病 点击确定********************************************
+			submitBm:function(){
+				var arr=this.lxci;
+				var checkedArr=[];
+				var array=this.yzbmArray;
+				if (array.length==0) {
+					for (var i = 0; i < arr.length; i++) {
+						if (arr[i].checked) {
+							checkedArr.push(arr[i].name);
+						}
+					}
+				}else{//若非第一次选择已知病，将上一页面选择好的已知病先放到数组，再放本次选中的，最后去重
+					for (var i = 0; i < array.length; i++) {
+						checkedArr.push(array[i]);
+					}
+					for (var i = 0; i < arr.length; i++) {
+						if (arr[i].checked) {
+							checkedArr.push(arr[i].name);
+						}
+					}
+					checkedArr=Array.from(new Set(checkedArr));//数组去重
+				}
+				uni.$emit('func',{array:checkedArr,type:'yzbm'});
+				uni.navigateBack({
+					delta: 1
+				});
+			},
 			/* 点击建议词 将建议词放到指定view*/
 			idSeach: function(e) { 
 				this.seachHistory();
@@ -824,12 +883,12 @@
 						page: 0,
 						//isClick:flag
 					},
-					success: function(res) {
+					success: res => {
 						console.log(res);
 						if (res.data.status == 200) {
-							_this.historyStatus=false;
-							_this.lxci = res.data.zybzPartList;
-							if (flag) {
+							this.historyStatus=false;
+							//this.lxci = res.data.zybzPartList;
+							/* if (flag) {
 								_this.manualSeach=true;
 								_this.lx_view= false;
 								//_this.glzz=false;
@@ -837,11 +896,69 @@
 								_this.lx_view= true;
 								//_this.glzz=false;
 								_this.manualSeach=false;
+							} */
+							//整合sjzz =================
+							var sjzzArr=[];
+							var arr= res.data.zybzPartList
+							for (var i = 0; i < arr.length; i++) {
+								var sjzzObj={
+									sjzz: '',
+									cfzz: [],
+									bzzz:[],
+									zzjs:[],
+									zzbh:[],
+									bzbzmc:[],
+									sjzzNum:0,
+									checked:false
+								};
+								if (sjzzArr.length==0) {
+									sjzzObj.sjzz=arr[i].sjzz;
+									var obj = {};
+									obj.value=arr[i].cfzz;
+									obj.checked=false;
+									sjzzObj.cfzz.push(obj);
+									sjzzObj.bzzz.push(arr[i].bzzz);
+									sjzzObj.zzjs.push(arr[i].zzjs);
+									sjzzObj.zzbh.push(arr[i].zzbh);
+									sjzzObj.bzbzmc.push(arr[i].bzbzmc);
+									sjzzArr.push(sjzzObj);
+								}else{
+									for (var n = 0; n < sjzzArr.length; n++) {
+										if (sjzzArr[n].sjzz==arr[i].sjzz) {
+											var obj = {};
+											obj.value=arr[i].cfzz;
+											obj.checked=false;
+											sjzzArr[n].cfzz.push(obj);
+											sjzzArr[n].bzzz.push(arr[i].bzzz);
+											sjzzArr[n].zzjs.push(arr[i].zzjs);
+											sjzzArr[n].zzbh.push(arr[i].zzbh);
+											sjzzArr[n].bzbzmc.push(arr[i].bzbzmc);
+											break;
+										}else{
+											if (n==sjzzArr.length-1) {
+												sjzzObj.sjzz=arr[i].sjzz;
+												var obj = {};
+												obj.value=arr[i].cfzz;
+												obj.checked=false;
+												sjzzObj.cfzz.push(obj);
+												sjzzObj.bzzz.push(arr[i].bzzz);
+												sjzzObj.zzjs.push(arr[i].zzjs);
+												sjzzObj.zzbh.push(arr[i].zzbh);
+												sjzzObj.bzbzmc.push(arr[i].bzbzmc);
+												sjzzArr.push(sjzzObj);
+												break;
+											}
+										}
+									}
+								}
 							}
+							this.hotWordModal=true;
+							this.xgzzArr=sjzzArr;
+							this.historyAndFamiliar=false;
 						} else if(res.data.status == 301) {
 							//_this.seachModal=false;
-							_this.lx_view = false;
-							_this.lxci= [];
+							this.lx_view = false;
+							this.lxci= [];
 							if (flag) {
 								uni.showModal({
 									title: '提示',
@@ -889,7 +1006,9 @@
 								_this.lx_view=false;
 								return
 							}
-							for (var i = 0; i < arr.length; i++) {
+							_this.hotWordModal=true;
+							_this.historyAndFamiliar=false;
+							/* for (var i = 0; i < arr.length; i++) {
 								var obj={
 									cfzz:arr[i].split('#')[0],
 									bzzz:arr[i].split('#')[1],
@@ -905,7 +1024,59 @@
 								_this.lx_view= true;
 								//_this.glzz=false;
 								_this.manualSeach=false;
+							} */
+							//整合sjzz =================
+							var sjzzArr=[];
+							for (var i = 0; i < arr.length; i++) {
+								var sjzzObj={
+									sjzz: '',
+									cfzz: [],
+									bzzz:[],
+									zzjs:[],
+									bzjs1:[],
+									sjzzNum:0,
+									checked:false
+								};
+								if (sjzzArr.length==0) {
+									sjzzObj.sjzz=arr[i].split('#')[3];
+									var obj = {};
+									obj.value=arr[i].split('#')[0];
+									obj.checked=false;
+									sjzzObj.cfzz.push(obj);
+									sjzzObj.bzzz.push(arr[i].split('#')[1]);
+									sjzzObj.zzjs.push(arr[i].split('#')[2]);
+									sjzzObj.bzjs1.push(arr[i].split('#')[4]);
+									sjzzArr.push(sjzzObj);
+								}else{
+									for (var n = 0; n < sjzzArr.length; n++) {
+										if (sjzzArr[n].sjzz==arr[i].split('#')[3]) {
+											var obj = {};
+											obj.value=arr[i].split('#')[0];
+											obj.checked=false;
+											sjzzArr[n].cfzz.push(obj);
+											sjzzArr[n].bzzz.push(arr[i].split('#')[1]);
+											sjzzArr[n].zzjs.push(arr[i].split('#')[2]);
+											sjzzArr[n].bzjs1.push(arr[i].split('#')[4]);
+											break;
+										}else{
+											if (n==sjzzArr.length-1) {
+												sjzzObj.sjzz=arr[i].split('#')[3];
+												var obj = {};
+												obj.value=arr[i].split('#')[0];
+												obj.checked=false;
+												sjzzObj.cfzz.push(obj);
+												sjzzObj.bzzz.push(arr[i].split('#')[1]);
+												sjzzObj.zzjs.push(arr[i].split('#')[2]);
+												sjzzObj.bzjs1.push(arr[i].split('#')[4]);
+												sjzzArr.push(sjzzObj);
+												break;
+											}
+										}
+									}
+								}
 							}
+							console.log(sjzzArr);
+							_this.xgzzArr=sjzzArr
 						} else if(res.statusCode == 301) {
 							//_this.seachModal=false;
 							_this.lx_view = false;
@@ -933,16 +1104,19 @@
 					console.log(res);
 					if (res.data.length!==0||res.data!=='') {
 						this.historyStatus=false;
+						this.historyAndFamiliar=false;
+						this.hotWordModal=true;
 						for (var i = 0; i < res.data.length; i++) {
 							var obj={
+								checked:false,
+								id:res.data[i].split('#')[0],
 								name:res.data[i].split('#')[1],
 								type:res.data[i].split('#')[2]
 							}
 							this.lxci.push(obj);
 						}
-						console.log(this.lxci);
-						this.manualSeach=flag;
-						this.lx_view=!flag;
+						/* this.manualSeach=flag;
+						this.lx_view=!flag; */
 					}else{
 						if (flag) {
 							uni.showToast({
@@ -1008,9 +1182,9 @@
 	border-bottom-left-radius: 0px;
 }
 .zz_hint{
-	padding-top: 10upx;
+	font-size: 30upx;
 	color: #A5A5A5;
-	font-size: 36upx;
+	padding-top: 10upx;
 }
 .lx_view {
 	width: 97%;
@@ -1076,20 +1250,30 @@
 }
 .xgzzBtn{
 	color: #5a5a5a;
+	position: relative;
 	text-align: start;
 	line-height: 1.5;
 	background: #F8F8F8;
 	margin-right: 16upx;
 	margin-bottom: 16upx;
 	border-radius: 12upx;
-	padding: 20upx 40upx;
+	padding: 10upx 30upx;
 	display: inline-block;
 	border: 4upx solid #1296db;
 }
+.sjzzNum{
+	top: -7px;
+	right: -5px;
+	color: #333333;
+	font-size: 11px;
+	padding: 0px 3px;
+	background: #fff;
+	border-radius: 4px;
+	position: absolute;
+	border: 1px solid #ccc;
+}
 .cfzzChecked{
-	border: 0upx;
 	color: #FFFFFF;
-	padding: 24upx 44upx;
 	background: #1296DB;
 }
 .btnHover{
